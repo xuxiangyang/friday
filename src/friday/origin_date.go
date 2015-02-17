@@ -6,7 +6,6 @@ import (
 	"log"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -38,28 +37,29 @@ func ReadFromFile(filePath string) (originDates OriginDates) {
 }
 
 func convertOriginDate(line string) (originDate OriginDate, err error) {
-	ymd := strings.Split(line, " ")
+	sepRegexp := regexp.MustCompile(`\s+`)
+	ymd := sepRegexp.Split(line, -1)
 
 	if len(ymd) != 3 {
-		return originDate, errors.New("Bad Date Data with" + line)
+		return originDate, errors.New("Bad Date Data with " + line)
 	}
 
 	yearStr, monthStr, dayStr := ymd[0], ymd[1], ymd[2]
 
 	if year, err := strconv.Atoi(yearStr); err != nil {
-		return originDate, errors.New("Bad Date Data with" + line)
+		return originDate, errors.New("Bad Year with " + line)
 	} else {
 		originDate.Year = year
 	}
 
 	if month, err := strconv.Atoi(monthStr); err != nil && month > 0 && month < 12 {
-		return originDate, errors.New("Bad Date Data with" + line)
+		return originDate, errors.New("Bad Month with " + line)
 	} else {
 		originDate.Month = month
 	}
 
 	if day, err := strconv.Atoi(dayStr); err != nil && day > 0 && day < 32 {
-		return originDate, errors.New("Bad Date Data with" + line)
+		return originDate, errors.New("Bad Day with " + line)
 	} else {
 		originDate.Day = day
 	}
